@@ -20,19 +20,26 @@ domain = get_command_line_argument
 dns_raw = File.readlines("zone")
 
 def parse_dns(dns)
-  #remove null sttings
-  dns = dns - [""]
-  return (dns.map { |recoard|
-           type, source, destination = recoard.split(",").map(&:strip)
-           [source, [destination, type]]
-         }).to_h
+  p dns.
+      reject { |line| line.empty? || line[0] == "#" }.
+      map { |line| line.split(",").map(&:strip) }.
+      reject { |record| record.length < 3 }
+  dns.
+    reject { |line| line.empty? || line[0] == "#" }.
+    map { |line| line.split(",").map(&:strip) }.
+    reject { |record| record.length < 3 }.
+    each_with_object({}) do |record, records|
+    records[record[1]] = {
+      type: record[0],
+      target: record[2],
+    }
+  end
 end
 
 def resolve(dns_records, lookup_chain, domain)
   if dns_records.include? domain
-    destination = dns_records[domain][0]
-    lookup_chain << destination
-    resolve(dns_records, lookup_chain, destination)
+    lookup_chain << dns_records[domain][:target]
+    resolve(dns_records, lookup_chain, dns_records[domain][:target])
     return lookup_chain
   else
     return ["Error: record not found for #{domain}"]
@@ -44,8 +51,9 @@ end
 # you can invoke a function only after it is defined.
 
 dns_records = parse_dns(dns_raw)
+p dns_records
 lookup_chain = [domain]
 
 lookup_chain = resolve(dns_records, lookup_chain, domain)
 
-puts lookup_chain.join(" => ")
+puts lookup_chain * " => "
