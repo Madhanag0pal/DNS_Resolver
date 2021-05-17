@@ -25,7 +25,7 @@ end
 def resolve(dns_records, lookup_chain, domain)
   if dns_records.include? domain
     lookup_chain << dns_records.dig(domain, :target)
-    resolve(dns_records, lookup_chain, dns_records[domain][:target])
+    resolve(dns_records, lookup_chain, dns_records.dig(domain, :target))
     return lookup_chain
   else
     return ["Error: record not found for #{domain}"]
