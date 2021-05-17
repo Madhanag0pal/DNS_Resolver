@@ -47,7 +47,7 @@ end
 # you can invoke a function only after it is defined.
 
 dns_records = parse_dns(dns_raw)
-p dns_records
+
 lookup_chain = [domain]
 
 lookup_chain = resolve(dns_records, lookup_chain, domain)
