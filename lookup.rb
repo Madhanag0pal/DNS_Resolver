@@ -11,8 +11,7 @@ domain = get_command_line_argument
 dns_raw = File.readlines("zone")
 
 def parse_dns(dns)
-  dns.
-    reject { |line| line.empty? || line[0] == "#" }.
+  dns.reject { |line| line[0] == "#" }.
     map { |line| line.split(",").map(&:strip) }.
     reject { |record| record.length < 3 }.
     each_with_object({}) do |record, records|
@@ -25,7 +24,7 @@ end
 
 def resolve(dns_records, lookup_chain, domain)
   if dns_records.include? domain
-    lookup_chain << dns_records[domain][:target]
+    lookup_chain << dns_records.dig(domain, :target)
     resolve(dns_records, lookup_chain, dns_records[domain][:target])
     return lookup_chain
   else
