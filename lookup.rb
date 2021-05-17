@@ -20,10 +20,6 @@ domain = get_command_line_argument
 dns_raw = File.readlines("zone")
 
 def parse_dns(dns)
-  p dns.
-      reject { |line| line.empty? || line[0] == "#" }.
-      map { |line| line.split(",").map(&:strip) }.
-      reject { |record| record.length < 3 }
   dns.
     reject { |line| line.empty? || line[0] == "#" }.
     map { |line| line.split(",").map(&:strip) }.
