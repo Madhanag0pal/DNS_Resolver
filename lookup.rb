@@ -17,12 +17,11 @@ domain = get_command_line_argument
 # array of string, where each element is a line
 # https://www.rubydoc.info/stdlib/core/IO:readlines
 
-dns_raw = File.readlines("zone", chomp: true)
+dns_raw = File.readlines("zone")
 
 def parse_dns(dns)
   #remove null sttings
   dns = dns - [""]
-
   return (dns.map { |recoard|
            type, source, destination = recoard.split(",").map(&:strip)
            [source, [destination, type]]
